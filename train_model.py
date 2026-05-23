@@ -3,10 +3,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
+from sklearn.utils import shuffle
 import pickle
 
 # Load dataset
 data = pd.read_csv("disease_data.csv")
+
+# Shuffle dataset
+data = shuffle(data, random_state=42)
 
 # Encode disease labels
 encoder = LabelEncoder()
@@ -18,15 +22,24 @@ y = data["disease"]
 
 # Split dataset
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X,
+    y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
 )
 
-# Train model
-model = RandomForestClassifier()
+# Better Random Forest
+model = RandomForestClassifier(
+    n_estimators=200,
+    max_depth=10,
+    random_state=42
+)
 
+# Train
 model.fit(X_train, y_train)
 
-# Predictions
+# Predict
 y_pred = model.predict(X_test)
 
 # Accuracy
